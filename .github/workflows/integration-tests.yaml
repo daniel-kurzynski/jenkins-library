@@ -14,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/setup-java@v1
+        with:
+          java-version: '1'
       - name: get pull request url
         id: pullrequest
         run: echo "::set-output name=pullrequest::$(curl ${{ github.event.comment.issue_url }} | jq '.pull_request.url' | sed 's/\"//g')"
