@@ -30,5 +30,8 @@ jobs:
         with:
           repository: ${{ steps.repository.outputs.repository }}
           ref: ${{ steps.branchname.outputs.branchname }}
+          
+      - name: install groovy
+        run: sudo apt-get install groovy -y
       - name: run consumer tests
         run: cd consumer-test && groovy consumerTestController.groovy
