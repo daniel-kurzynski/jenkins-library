@@ -39,4 +39,4 @@ jobs:
           REPOSITORY_UNDER_TEST: ${{ steps.repository.outputs.repository }}
           BRANCH_NAME: ${{ steps.branchname.outputs.branchname }}
           BUILD_WEB_URL: https://github.com/daniel-kurzynski/actions-playground/actions/runs/$GITHUB_RUN_ID
-          INTEGRATION_TEST_VOTING_TOKEN: ${{ secrets.TEST_SECRET }}
+          INTEGRATION_TEST_VOTING_TOKEN: ${{ secrets.INTEGRATION_TEST_VOTING_TOKEN }}
