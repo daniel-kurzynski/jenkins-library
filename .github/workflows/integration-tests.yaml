@@ -6,8 +6,8 @@ on:
     types: [created]
 
 jobs:
-  build:
-    name: Trigger Integration Tests
+  prepare:
+    name: Prepare Integration Tests
 
     runs-on: ubuntu-latest
     if: github.event.comment.body == '/it' && (github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'OWNER')
@@ -25,6 +25,15 @@ jobs:
       - name: get repository
         id: repository
         run: echo "::set-output name=repository::$(curl ${{ steps.pullrequest.outputs.pullrequest }} | jq '.head.repo.full_name' | sed 's/\"//g')"
+  consumer-tests:
+    name: Consumer Tests
+    
+    needs: [prepare]
+    
+    runs-on: ubuntu-latest
+    if: github.event.comment.body == '/it' && (github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'OWNER')
+
+    steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
@@ -47,3 +56,24 @@ jobs:
           NEO_DEPLOY_USERNAME: ${{ secrets.NEO_DEPLOY_USERNAME }}
           NEO_DEPLOY_PASSWORD: ${{ secrets.NEO_DEPLOY_PASSWORD }}
           CX_INFRA_IT_TMS_UPLOAD: ${{ secrets.CX_INFRA_IT_TMS_UPLOAD }}
+  go-integration-tests:
+    name: Go Integration Tests
+    
+    needs: [prepare]
+    
+    runs-on: ubuntu-latest
+    if: github.event.comment.body == '/it' && (github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'OWNER')
+
+    steps:
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.13.x'
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ steps.repository.outputs.repository }}
+          ref: ${{ steps.branchname.outputs.branchname }}
+      - name: test
+        env:
+          PIPER_INTEGRATION_GITHUB_TOKEN: ${{secrets.PIPER_INTEGRATION_GITHUB_TOKEN}}
+        run: go test -tags=integration ./integration/...
