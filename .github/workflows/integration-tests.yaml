@@ -38,7 +38,7 @@ jobs:
         env:
           REPOSITORY_UNDER_TEST: ${{ steps.repository.outputs.repository }}
           BRANCH_NAME: ${{ steps.branchname.outputs.branchname }}
-          BUILD_WEB_URL: https://github.com/daniel-kurzynski/actions-playground/actions/runs/$GITHUB_RUN_ID
+          BUILD_WEB_URL: https://github.com/daniel-kurzynski/actions-playground/actions/runs/${{ github.run_id }}
           INTEGRATION_TEST_VOTING_TOKEN: ${{ secrets.INTEGRATION_TEST_VOTING_TOKEN }}
           CX_INFRA_IT_CF_USERNAME: ${{ secrets.CX_INFRA_IT_CF_USERNAME }}
           CX_INFRA_IT_CF_PASSWORD: ${{ secrets.CX_INFRA_IT_CF_PASSWORD }}
