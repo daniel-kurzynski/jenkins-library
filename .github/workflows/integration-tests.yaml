@@ -93,4 +93,4 @@ jobs:
       - name: update status
         if: failure()
         run: |
-          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/${{ steps.commitId.outputs.commitId }}' -H 'Content-Type: application/json' --data '{"state": "failed", "context": "Go / integration-tests", "target_url": "https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}"}' -H 'Authorization: token ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}'
+          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/${{ steps.commitId.outputs.commitId }}' -H 'Content-Type: application/json' --data '{"state": "failure", "context": "Go / integration-tests", "target_url": "https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}"}' -H 'Authorization: token ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}'
