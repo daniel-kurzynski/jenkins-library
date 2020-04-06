@@ -84,7 +84,7 @@ jobs:
           BUILD_WEB_URL: https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}
           INTEGRATION_TEST_VOTING_TOKEN: ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}
         run: |
-          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/{{ steps.commitId.outputs.commitId }}' -H 'Content-Type: application/json' --data '{"state": "pending", "target_url": "$BUILD_WEB_URL"}' -H 'Authorization: token $INTEGRATION_TEST_VOTING_TOKEN'"
+          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/{{ steps.commitId.outputs.commitId }}' -H 'Content-Type: application/json' --data '{"state": "pending", "target_url": "$BUILD_WEB_URL"}' -H 'Authorization: token $INTEGRATION_TEST_VOTING_TOKEN'
       - name: build
         env:
           CGO_ENABLED: 0
