@@ -32,6 +32,10 @@ jobs:
           ref: ${{ steps.branchname.outputs.branchname }}
           
       - name: install groovy
-        run: sudo apt-get install groovy -y
+        run: sudo apt-get update && sudo apt-get install groovy -y
       - name: run consumer tests
         run: cd consumer-test && groovy consumerTestController.groovy
+        env:
+          REPOSITORY_UNDER_TEST: ${{ steps.repository.outputs.repository }}
+          BRANCH_NAME: ${{ steps.branchname.outputs.branchname }}
+          BUILD_WEB_URL: https://github.com/daniel-kurzynski/actions-playground/actions/runs/${{ GITHUB_RUN_ID }}
