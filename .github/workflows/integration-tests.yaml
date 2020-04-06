@@ -56,9 +56,6 @@ jobs:
     if: github.event.comment.body == '/it' && (github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'OWNER')
 
     steps:
-      - uses: actions/setup-java@v1
-        with:
-          java-version: '11'
       - name: get pull request url
         id: pullrequest
         run: echo "::set-output name=pullrequest::$(curl ${{ github.event.comment.issue_url }} | jq '.pull_request.url' | sed 's/\"//g')"
@@ -81,7 +78,10 @@ jobs:
         run: echo "::set-output name=commitId::$(git log --format=%H -n 1)"
       - name: update status
         run: |
-          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/${{ steps.commitId.outputs.commitId }}' -H 'Content-Type: application/json' --data '{"state": "pending", "context": "Go / integration (pull_request)", "target_url": "https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}"}' -H 'Authorization: token ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}'
+          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/${{ steps.commitId.outputs.commitId }}' \ 
+          -H 'Content-Type: application/json' \
+          --data '{"state": "pending", "context": "Go - integration-tests", "target_url": "https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}"}' \
+          -H 'Authorization: token ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}'
       - name: build
         env:
           CGO_ENABLED: 0
@@ -91,3 +91,16 @@ jobs:
         env:
           PIPER_INTEGRATION_GITHUB_TOKEN: ${{secrets.PIPER_INTEGRATION_GITHUB_TOKEN}}
         run: go test -tags=integration ./integration/...
+      - name: update status
+        run: |
+          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/${{ steps.commitId.outputs.commitId }}' \ 
+          -H 'Content-Type: application/json' \
+          --data '{"state": "success", "context": "Go - integration-tests", "target_url": "https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}"}' \
+          -H 'Authorization: token ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}'
+      - name: update status
+        if: failure()
+        run: |
+          curl --location --request POST 'https://api.github.com/repos/daniel-kurzynski/jenkins-library/statuses/${{ steps.commitId.outputs.commitId }}' \ 
+          -H 'Content-Type: application/json' \
+          --data '{"state": "failed", "context": "Go - integration-tests", "target_url": "https://github.com/daniel-kurzynski/jenkins-library/actions/runs/${{ github.run_id }}"}' \
+          -H 'Authorization: token ${{secrets.INTEGRATION_TEST_VOTING_TOKEN}}'
